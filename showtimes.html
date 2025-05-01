@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Court-STATE VS A NOBODY - Book Tickets</title>
+  <link rel="stylesheet" href="showtimes-style.css">
+
+  <style>
+    /* Your existing styles, kept intact */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    .showtimes-container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .tags span {
+      background-color: #e0e0e0;
+      border-radius: 15px;
+      padding: 5px 12px;
+      margin-right: 8px;
+      font-size: 14px;
+    }
+
+    .dates {
+      display: flex;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    .date {
+      text-align: center;
+      background: #e0e0e0;
+      padding: 10px;
+      margin-right: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      min-width: 60px;
+    }
+
+    .date.active {
+      background: #ff3366;
+      color: white;
+    }
+
+    .filters {
+      margin: 20px 0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-button {
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .filter-button.active {
+      border: 2px solid #ff3366;
+      color: #ff3366;
+    }
+
+    .cinema {
+      background: white;
+      border-radius: 8px;
+      margin-top: 20px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .cinema h3 {
+      margin: 0 0 15px;
+    }
+
+    .showtimes {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .time {
+      background: #e6ffe6;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .time:hover {
+      background: #ccffcc;
+    }
+
+    .time.yellow {
+      background: #fff5e6;
+      color: #ff9900;
+    }
+
+    .note {
+      font-size: 12px;
+      color: gray;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="showtimes-container">
+  <h1>Movies Playing</h1>
+
+  <div class="dates" id="date-selector">
+    <!-- Dates will be dynamically generated -->
+  </div>
+
+  <div id="movies-container">
+    <!-- Movies will be shown here -->
+  </div>
+</div>
+
+<script>
+  const dates = ['27 APR', '28 APR', '29 APR', '30 APR', '01 MAY', '02 MAY', '03 MAY'];
+
+  const moviesData = {
+    '27 APR': [
+      {
+        title: 'Court-STATE VS A NOBODY - (Telugu)',
+        tags: ['UA13+', 'Comedy', 'Drama'],
+        cinemas: [
+          { name: 'Cinepolis: PVP Square Mall, Vijayawada', times: ['02:40 PM', '05:30 PM', '08:25 PM', '11:15 PM'] },
+          { name: 'INOX: LEPL Icon, Patamata', times: ['01:45 PM', '07:30 PM', '10:20 PM'] },
+          { name: 'Cinepolis: Power One Mall, Vijayawada', times: ['05:10 PM', '08:00 PM', '10:50 PM'] }
+        ]
+      },
+      {
+        title: 'Mad Square - (Telugu)',
+        tags: ['UA13+', 'Comedy', 'Drama'],
+        cinemas: [
+          { name: 'Cinepolis: PVP Square Mall, Vijayawada', times: ['02:40 PM', '05:30 PM', '08:25 PM', '11:15 PM'] },
+          { name: 'INOX: LEPL Icon, Patamata', times: ['01:45 PM', '07:30 PM', '10:20 PM'] },
+          { name: 'Cinepolis: Power One Mall, Vijayawada', times: ['05:10 PM', '08:00 PM', '10:50 PM'] }
+        ]
+      },
+      {
+        title: 'Arjun S/O Vyayanthi - (Telugu)',
+        tags: ['UA13+', 'Comedy', 'Drama'],
+        cinemas: [
+          { name: 'Cinepolis: PVP Square Mall, Vijayawada', times: ['02:40 PM', '05:30 PM', '08:25 PM', '11:15 PM'] },
+          { name: 'INOX: LEPL Icon, Patamata', times: ['01:45 PM', '07:30 PM', '10:20 PM'] },
+          { name: 'Cinepolis: Power One Mall, Vijayawada', times: ['05:10 PM', '08:00 PM', '10:50 PM'] }
+        ]
+      }
+    ],
+    // Add for 28 APR, 29 APR, etc. if needed
+  };
+
+  function generateDates() {
+    const dateSelector = document.getElementById('date-selector');
+    dates.forEach(date => {
+      const div = document.createElement('div');
+      div.className = 'date';
+      div.innerHTML = date.split(' ')[0] + '<br>' + date.split(' ')[1] + '<br>' + date.split(' ')[2];
+      div.onclick = () => selectDate(date, div);
+      dateSelector.appendChild(div);
+    });
+  }
+
+  function selectDate(selectedDate, element) {
+    // Reset active date
+    document.querySelectorAll('.date').forEach(date => date.classList.remove('active'));
+    element.classList.add('active');
+
+    // Load movies
+    loadMovies(selectedDate);
+  }
+
+  function loadMovies(date) {
+    const moviesContainer = document.getElementById('movies-container');
+    moviesContainer.innerHTML = '';
+
+    const movies = moviesData[date] || [];
+    if (movies.length === 0) {
+      moviesContainer.innerHTML = '<p>No shows available for this date.</p>';
+      return;
+    }
+
+    movies.forEach(movie => {
+      const movieHTML = `
+        <div class="showtimes-container">
+          <h1>${movie.title}</h1>
+          <div class="tags">
+            ${movie.tags.map(tag => `<span>${tag}</span>`).join('')}
+          </div>
+          <div class="cinema-container">
+            ${movie.cinemas.map(cinema => `
+              <div class="cinema">
+                <h3>${cinema.name}</h3>
+                <div class="showtimes">
+                  ${cinema.times.map(time => `
+                    <a href="seats.html"><button class="time">${time}</button></a>
+                  `).join('')}
+                </div>
+                <p class="note">Non-cancellable</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      moviesContainer.innerHTML += movieHTML;
+    });
+  }
+
+  // Initialize
+  generateDates();
+  selectDate('27 APR', document.querySelector('.date'));
+</script>
+
+</body>
+</html>

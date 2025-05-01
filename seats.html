@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Select Seats</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .seat-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .seat-options {
+      margin: 20px 0;
+    }
+
+    .seat-options button {
+      background: none;
+      border: 2px solid #ddd;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .seat-options button.active {
+      background-color: #ff5670;
+      color: white;
+      border-color: #ff5670;
+    }
+
+    .seat-categories {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .seat-categories div {
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .seat-categories span {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .seat-categories .available { color: green; }
+    .seat-categories .almost-full { color: orange; }
+    .seat-categories .sold-out { color: gray; text-decoration: line-through; }
+
+    #selectSeatsBtn {
+      background-color: #ff5670;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #selectSeatsBtn:hover {
+      background-color: #ff3455;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="seat-container">
+    <h2>How Many Seats?</h2>
+
+    <div class="seat-options" id="seatOptions">
+      <button onclick="selectSeat(1)">1</button>
+      <button onclick="selectSeat(2)">2</button>
+      <button onclick="selectSeat(3)">3</button>
+      <button onclick="selectSeat(4)">4</button>
+      <button onclick="selectSeat(5)">5</button>
+      <button onclick="selectSeat(6)">6</button>
+    </div>
+
+    <div class="seat-categories">
+      <div>NORMAL <br><b>Rs. 177</b><span class="available">Available</span></div>
+      <div>EXECUTIVE <br><b>Rs. 177</b><span class="almost-full">Almost Full</span></div>
+      <div>PREMIUM <br><b>Rs. 177</b><span class="almost-full">Almost Full</span></div>
+      <div>VIP <br><b>Rs. 295</b><span class="sold-out">Sold Out</span></div>
+    </div>
+
+    <button id="selectSeatsBtn" onclick="goToShowtimes()">Select Seats</button>
+  </div>
+
+  <script>
+    let selectedSeats = 0;
+
+    function selectSeat(seatNumber) {
+      selectedSeats = seatNumber;
+      
+      // Highlight selected button
+      const buttons = document.querySelectorAll('#seatOptions button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      buttons[seatNumber - 1].classList.add('active');
+    }
+
+    function goToShowtimes() {
+      if (selectedSeats === 0) {
+        alert("Please select number of seats first!");
+        return;
+      }
+      // Save selected seats and redirect
+      localStorage.setItem("selectedSeats", selectedSeats);
+      window.location.href = "seat_map.html"; // Redirect to next page
+    }
+  </script>
+
+</body>
+</html>
